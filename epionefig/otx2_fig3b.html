@@ -10858,74 +10858,6 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=baa66583">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Upstream-processing-(already-done;-shown-for-reproducibility)">Upstream processing (already done; shown for reproducibility)<a class="anchor-link" href="#Upstream-processing-(already-done;-shown-for-reproducibility)">¶</a></h3><p>HOMER's <code>findMotifsGenome.pl</code> is the motif enrichment tool the paper uses
-(Methods: "Motif enrichment analysis was performed using HOMER with
-<code>findMotifsGenome.pl -size 200 -len 8,10,12</code>"). The call below takes ~15
-minutes on 8 cores and produces <code>homer_out/knownResults.txt</code> plus a
-<code>homer_out/knownResults/</code> folder of per-motif PWM files. The downstream
-cells below parse these artefacts.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e30f8232">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# Build HOMER peak file from Supp Table 7
-import pandas as pd, pathlib
-SUPP = pathlib.Path('/scratch/users/steorra/data/otx2/supp/supp_tables.xlsx')
-s7 = pd.read_excel(SUPP, sheet_name='Table S7_4C OTX2_CUTRUN_peaks',
-                     header=None, names=['chrom','start','end','name','score'])
-s7 = s7.dropna(subset=['chrom','start','end'])
-s7['start'] = s7['start'].astype(int); s7['end'] = s7['end'].astype(int)
-peaks = pd.DataFrame({'id':[f'peak_{i}' for i in range(len(s7))],
-                        'chrom': s7['chrom'], 'start': s7['start'],
-                        'end': s7['end'], 'strand': '+'})
-out = pathlib.Path('/tmp/otx2_compare/fig3b')
-out.mkdir(parents=True, exist_ok=True)
-peaks.to_csv(out/'peaks_4C_OTX2.txt', sep='\t', index=False, header=False)
-print(f'{len(peaks)} peaks -&gt; peaks_4C_OTX2.txt')
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=63cebea0">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# HOMER motif enrichment (~15 min on 8 cores)
-# Run in a terminal after the setup cell above, or via:
-#   !bash -c "..."
-cd /tmp/otx2_compare/fig3b
-PATH=/scratch/users/steorra/env/omicdev/bin:/scratch/users/steorra/env/omicdev/share/homer/bin:$PATH \
-findMotifsGenome.pl peaks_4C_OTX2.txt \
-    /scratch/users/steorra/data/hg19/hg19.fa \
-    homer_out \
-    -size 200 -len 8,10,12 -mask -p 8 \
-    -preparsedDir /tmp/otx2_compare/fig3b/preparsed
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=687ba8d0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -10933,6 +10865,198 @@ findMotifsGenome.pl peaks_4C_OTX2.txt \
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="Setup">Setup<a class="anchor-link" href="#Setup">¶</a></h3>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=767eb65b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Upstream-processing-(documented,-not-executed)">Upstream processing (documented, not executed)<a class="anchor-link" href="#Upstream-processing-(documented,-not-executed)">¶</a></h2><p>The cells in this section are wrapped in <code>%%script false --no-raise-error</code> so they <strong>do not run</strong>; they exist to document the full pipeline from raw FASTQ / GEO accession down to the cached inputs that the runnable cells below consume. Run them once from a shell if you are rebuilding <code>/scratch/users/steorra/data/otx2/</code> from scratch.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2dd4efa2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Reference-(hg19)">Reference (hg19)<a class="anchor-link" href="#Reference-(hg19)">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=736617d1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# ==========================================================
+# hg19 reference + GENCODE v41lift37 annotation + bowtie2 index
+# ==========================================================
+cd /scratch/users/steorra/data/hg19
+wget -c https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
+gunzip hg19.fa.gz &amp;&amp; samtools faidx hg19.fa
+cut -f1,2 hg19.fa.fai &gt; hg19.chrom.sizes
+
+wget -c https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/GRCh37_mapping/gencode.v41lift37.annotation.gtf.gz
+
+bowtie2-build --threads 8 hg19.fa bt2_idx/hg19
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=69c000ab">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Supplementary-tables-(source-of-the-peak-input)">Supplementary tables (source of the peak input)<a class="anchor-link" href="#Supplementary-tables-(source-of-the-peak-input)">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=42a04a3c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# ==========================================================
+# Nature Genetics supplementary tables S1-S7
+# ==========================================================
+# Downloaded from the article HTML (Springer). Save as:
+#   /scratch/users/steorra/data/otx2/supp/supp_tables.xlsx
+# The sheet names used throughout these notebooks:
+#   Table S3_stage-activated genes   — per-stage activated gene lists
+#   Table S4_OTX2 KD_RNA count       — raw count matrix for RNA-KD
+#   Table S6_DEG                     — DESeq2 DEG blocks (D2-KD, D3-KD, ...)
+#   Table S7_4C OTX2_CUTRUN_peaks    — 4C OTX2 peak list (n=45,521)
+echo "See paper Supplementary Information on the Nature article page."
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=46b1796a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="CUT&amp;RUN-FASTQ-%E2%86%92-BAM-(source-of-Supp-Table-S7-peaks)">CUT&amp;RUN FASTQ → BAM (source of Supp Table S7 peaks)<a class="anchor-link" href="#CUT&amp;RUN-FASTQ-%E2%86%92-BAM-(source-of-Supp-Table-S7-peaks)">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=241ae06c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# ==========================================================
+# CUT&amp;RUN FASTQ -&gt; deduplicated BAM -&gt; RPKM-normalised bigwig
+# ==========================================================
+# Reference: Wang et al. 2025 Methods ("CUT&amp;RUN assay" section) +
+# filename convention in OMIX006476 (`..._pmu_100bp_rpkm_bamCoverage.bw`).
+#
+# Raw FASTQs are hosted behind controlled access at GSA-Human HRA006621
+# (paper Data Availability). For each replicate:
+SAMPLE=h_OTX2_day2_CUTRUN_rep1         # one of rep1 / rep2 / KD etc.
+FQDIR=/scratch/users/steorra/data/otx2/HRA006621/fastq
+BAMDIR=/scratch/users/steorra/data/otx2/OMIX006476/bam
+BWDIR=/scratch/users/steorra/data/otx2/OMIX006476
+IDX=/scratch/users/steorra/data/hg19/bt2_idx/hg19
+mkdir -p $BAMDIR $BWDIR
+
+# 1. Adapter / quality trim
+trim_galore --paired --gzip -o $BAMDIR/trim \
+    $FQDIR/${SAMPLE}_R1.fastq.gz $FQDIR/${SAMPLE}_R2.fastq.gz
+
+# 2. Bowtie2 alignment (paired, CUT&amp;RUN-optimised)
+bowtie2 --end-to-end --very-sensitive --no-mixed --no-discordant \
+        -I 10 -X 700 -p 8 -x $IDX \
+        -1 $BAMDIR/trim/${SAMPLE}_R1_val_1.fq.gz \
+        -2 $BAMDIR/trim/${SAMPLE}_R2_val_2.fq.gz |
+    samtools view -bS -q 30 -f 2 - |
+    samtools sort -@ 8 -o $BAMDIR/${SAMPLE}.raw.bam
+
+# 3. Picard MarkDuplicates -&gt; "pmu" (picard mark unique) BAM
+picard MarkDuplicates \
+    I=$BAMDIR/${SAMPLE}.raw.bam \
+    O=$BAMDIR/${SAMPLE}.pmu.bam \
+    M=$BAMDIR/${SAMPLE}.pmu.metrics REMOVE_DUPLICATES=true
+samtools index $BAMDIR/${SAMPLE}.pmu.bam
+
+# 4. Merge biological replicates (rep1 + rep2 -&gt; rep12)
+samtools merge -@ 8 -o $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
+    $BAMDIR/h_OTX2_day2_CUTRUN_rep1.pmu.bam \
+    $BAMDIR/h_OTX2_day2_CUTRUN_rep2.pmu.bam
+samtools index $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam
+
+# 5. RPKM bigwig (matches published file name)
+bamCoverage -b $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
+    -o $BWDIR/h_OTX2_day2_CUTRUN_rep12_pmu_100bp_rpkm_bamCoverage.bw \
+    --binSize 100 --normalizeUsing RPKM -p 8
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=db0a46f7">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="MACS2-peak-calling-(Supp-Table-S7)">MACS2 peak calling (Supp Table S7)<a class="anchor-link" href="#MACS2-peak-calling-(Supp-Table-S7)">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0dfbad91">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# ==========================================================
+# MACS2 peak calling on CUT&amp;RUN BAMs
+# (Supp Table S7 peaks + h_OTX2_day2_CUTRUN_rep12_peaks.bed)
+# ==========================================================
+BAMDIR=/scratch/users/steorra/data/otx2/OMIX006476/bam
+PEAKDIR=/scratch/users/steorra/data/otx2/OMIX006476/peaks
+mkdir -p $PEAKDIR
+
+macs2 callpeak \
+    -t $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
+    -f BAMPE -g hs --nomodel --call-summits \
+    --keep-dup all -q 0.01 \
+    -n h_OTX2_day2_CUTRUN_rep12 --outdir $PEAKDIR
+# -&gt; $PEAKDIR/h_OTX2_day2_CUTRUN_rep12_peaks.narrowPeak  (distributed as _peaks.bed)
+# Supp Table S7 is this peak set curated by the paper authors.
+</pre></div>
+</div>
 </div>
 </div>
 </div>
