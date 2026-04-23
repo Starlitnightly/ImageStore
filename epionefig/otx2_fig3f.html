@@ -10872,250 +10872,15 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7f6230c8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ab24d60e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Upstream-processing-(documented,-not-executed)">Upstream processing (documented, not executed)<a class="anchor-link" href="#Upstream-processing-(documented,-not-executed)">¶</a></h2><p>The cells in this section are wrapped in <code>%%script false --no-raise-error</code> so they <strong>do not run</strong>; they exist to document the full pipeline from raw FASTQ / GEO accession down to the cached inputs that the runnable cells below consume. Run them once from a shell if you are rebuilding <code>/scratch/users/steorra/data/otx2/</code> from scratch.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6d3f1ade">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Reference-(hg19-+-GENCODE)">Reference (hg19 + GENCODE)<a class="anchor-link" href="#Reference-(hg19-+-GENCODE)">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bf04e01f">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# ==========================================================
-# hg19 reference + GENCODE v41lift37 annotation + bowtie2 index
-# ==========================================================
-cd /scratch/users/steorra/data/hg19
-wget -c https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
-gunzip hg19.fa.gz &amp;&amp; samtools faidx hg19.fa
-cut -f1,2 hg19.fa.fai &gt; hg19.chrom.sizes
-
-wget -c https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/GRCh37_mapping/gencode.v41lift37.annotation.gtf.gz
-
-bowtie2-build --threads 8 hg19.fa bt2_idx/hg19
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7cc6fa46">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Supplementary-tables-S3-/-S4-/-S6-/-S7">Supplementary tables S3 / S4 / S6 / S7<a class="anchor-link" href="#Supplementary-tables-S3-/-S4-/-S6-/-S7">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d701067f">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# ==========================================================
-# Nature Genetics supplementary tables S1-S7
-# ==========================================================
-# Downloaded from the article HTML (Springer). Save as:
-#   /scratch/users/steorra/data/otx2/supp/supp_tables.xlsx
-# The sheet names used throughout these notebooks:
-#   Table S3_stage-activated genes   — per-stage activated gene lists
-#   Table S4_OTX2 KD_RNA count       — raw count matrix for RNA-KD
-#   Table S6_DEG                     — DESeq2 DEG blocks (D2-KD, D3-KD, ...)
-#   Table S7_4C OTX2_CUTRUN_peaks    — 4C OTX2 peak list (n=45,521)
-echo "See paper Supplementary Information on the Nature article page."
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=425bd34d">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="CUT&amp;RUN-FASTQ-%E2%86%92-BAM-(source-of-Supp-Table-S7-peaks)">CUT&amp;RUN FASTQ → BAM (source of Supp Table S7 peaks)<a class="anchor-link" href="#CUT&amp;RUN-FASTQ-%E2%86%92-BAM-(source-of-Supp-Table-S7-peaks)">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2b27f5ad">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# ==========================================================
-# CUT&amp;RUN FASTQ -&gt; deduplicated BAM -&gt; RPKM-normalised bigwig
-# ==========================================================
-# Reference: Wang et al. 2025 Methods ("CUT&amp;RUN assay" section) +
-# filename convention in OMIX006476 (`..._pmu_100bp_rpkm_bamCoverage.bw`).
-#
-# Raw FASTQs are hosted behind controlled access at GSA-Human HRA006621
-# (paper Data Availability). For each replicate:
-SAMPLE=h_OTX2_day2_CUTRUN_rep1         # one of rep1 / rep2 / KD etc.
-FQDIR=/scratch/users/steorra/data/otx2/HRA006621/fastq
-BAMDIR=/scratch/users/steorra/data/otx2/OMIX006476/bam
-BWDIR=/scratch/users/steorra/data/otx2/OMIX006476
-IDX=/scratch/users/steorra/data/hg19/bt2_idx/hg19
-mkdir -p $BAMDIR $BWDIR
-
-# 1. Adapter / quality trim
-trim_galore --paired --gzip -o $BAMDIR/trim \
-    $FQDIR/${SAMPLE}_R1.fastq.gz $FQDIR/${SAMPLE}_R2.fastq.gz
-
-# 2. Bowtie2 alignment (paired, CUT&amp;RUN-optimised)
-bowtie2 --end-to-end --very-sensitive --no-mixed --no-discordant \
-        -I 10 -X 700 -p 8 -x $IDX \
-        -1 $BAMDIR/trim/${SAMPLE}_R1_val_1.fq.gz \
-        -2 $BAMDIR/trim/${SAMPLE}_R2_val_2.fq.gz |
-    samtools view -bS -q 30 -f 2 - |
-    samtools sort -@ 8 -o $BAMDIR/${SAMPLE}.raw.bam
-
-# 3. Picard MarkDuplicates -&gt; "pmu" (picard mark unique) BAM
-picard MarkDuplicates \
-    I=$BAMDIR/${SAMPLE}.raw.bam \
-    O=$BAMDIR/${SAMPLE}.pmu.bam \
-    M=$BAMDIR/${SAMPLE}.pmu.metrics REMOVE_DUPLICATES=true
-samtools index $BAMDIR/${SAMPLE}.pmu.bam
-
-# 4. Merge biological replicates (rep1 + rep2 -&gt; rep12)
-samtools merge -@ 8 -o $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
-    $BAMDIR/h_OTX2_day2_CUTRUN_rep1.pmu.bam \
-    $BAMDIR/h_OTX2_day2_CUTRUN_rep2.pmu.bam
-samtools index $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam
-
-# 5. RPKM bigwig (matches published file name)
-bamCoverage -b $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
-    -o $BWDIR/h_OTX2_day2_CUTRUN_rep12_pmu_100bp_rpkm_bamCoverage.bw \
-    --binSize 100 --normalizeUsing RPKM -p 8
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4f812889">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="MACS2-peak-calling-(Supp-Table-S7)">MACS2 peak calling (Supp Table S7)<a class="anchor-link" href="#MACS2-peak-calling-(Supp-Table-S7)">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=37283b63">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# ==========================================================
-# MACS2 peak calling on CUT&amp;RUN BAMs
-# (Supp Table S7 peaks + h_OTX2_day2_CUTRUN_rep12_peaks.bed)
-# ==========================================================
-BAMDIR=/scratch/users/steorra/data/otx2/OMIX006476/bam
-PEAKDIR=/scratch/users/steorra/data/otx2/OMIX006476/peaks
-mkdir -p $PEAKDIR
-
-macs2 callpeak \
-    -t $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
-    -f BAMPE -g hs --nomodel --call-summits \
-    --keep-dup all -q 0.01 \
-    -n h_OTX2_day2_CUTRUN_rep12 --outdir $PEAKDIR
-# -&gt; $PEAKDIR/h_OTX2_day2_CUTRUN_rep12_peaks.narrowPeak  (distributed as _peaks.bed)
-# Supp Table S7 is this peak set curated by the paper authors.
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=220baceb">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="RNA-seq-counts-%E2%86%92-DESeq2-DEG-(Supp-Table-S6)">RNA-seq counts → DESeq2 DEG (Supp Table S6)<a class="anchor-link" href="#RNA-seq-counts-%E2%86%92-DESeq2-DEG-(Supp-Table-S6)">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=56cf31c9">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
-# ==========================================================
-# RNA-seq FASTQ -&gt; gene counts -&gt; DESeq2 DEG (Supp Table S6)
-# ==========================================================
-# 1. STAR alignment (hg19 + GENCODE v41lift37)
-STAR --runThreadN 8 --runMode alignReads \
-     --genomeDir /scratch/users/steorra/data/hg19/star_idx \
-     --readFilesIn $FQDIR/${SAMPLE}_R1.fastq.gz $FQDIR/${SAMPLE}_R2.fastq.gz \
-     --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate \
-     --outFileNamePrefix $BAMDIR/${SAMPLE}.
-
-# 2. featureCounts -&gt; per-sample gene count matrix
-featureCounts -T 8 -p --countReadPairs \
-     -a /scratch/users/steorra/data/hg19/gencode.v41lift37.annotation.gtf.gz \
-     -o counts.tsv $BAMDIR/*.Aligned.sortedByCoord.out.bam
-
-# 3. DESeq2 (R) — below is the R one-liner the paper uses; produces Supp Table S6
-#    via contrasts OTX2_KD_vs_ctrl on each stage (D2, D3).
-Rscript -e '
-library(DESeq2)
-counts &lt;- as.matrix(read.table("counts.tsv", header=TRUE, row.names=1,
-                                check.names=FALSE, skip=1)[,-(1:5)])
-coldata &lt;- data.frame(
-    row.names = colnames(counts),
-    condition = factor(sub("_rep.*$", "", colnames(counts)))
-)
-dds &lt;- DESeqDataSetFromMatrix(counts, coldata, ~ condition)
-dds &lt;- DESeq(dds)
-res &lt;- results(dds, contrast=c("condition","h_OTX2_KD_day2","h_OTX2_ctrl_day2"))
-write.table(as.data.frame(res), "S6_D2_OTX2_KD_DEG.tsv",
-            sep="\t", quote=FALSE)
-'
-</pre></div>
-</div>
+<blockquote>
+<p><strong>Upstream / preprocessing.</strong> FASTQ → BAM → bigwig, MACS2 peak calling, Xia 2019 / Zou 2022 / Gifford 2013 downloads, and the one-off xlsx → TSV extractions are all documented in <a href="preprocess.ipynb"><code>preprocess.ipynb</code></a>. This notebook starts from the cached inputs under <code>/scratch/users/steorra/data/otx2/</code>.</p>
+</blockquote>
 </div>
 </div>
 </div>
@@ -11127,6 +10892,56 @@ write.table(as.data.frame(res), "S6_D2_OTX2_KD_DEG.tsv",
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="1-%C2%B7-Setup">1 · Setup<a class="anchor-link" href="#1-%C2%B7-Setup">¶</a></h2>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9369503f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="RNA-seq-FASTQ-%E2%86%92-DEG-(not-in-preprocess.ipynb)">RNA-seq FASTQ → DEG (not in preprocess.ipynb)<a class="anchor-link" href="#RNA-seq-FASTQ-%E2%86%92-DEG-(not-in-preprocess.ipynb)">¶</a></h3><p>fig3d/fig3f consume the paper's DESeq2 DEG output (Supp Table S6). That workflow is RNA-seq-specific and outside <code>epione</code>'s epigenomics scope, so the recipe is kept inline here rather than in <code>preprocess.ipynb</code>.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1d218bbf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# =========================================================
+# RNA-seq FASTQ -&gt; gene counts -&gt; DESeq2 DEG (Supp Table S6)
+# =========================================================
+# This block is specific to fig3d / fig3f (DEG-based analyses) — it is NOT
+# part of epione's core scope (epione consumes bigwigs / peaks / TSVs),
+# so it lives here instead of in preprocess.ipynb.
+STAR --runThreadN 8 --runMode alignReads \
+     --genomeDir /scratch/users/steorra/data/hg19/star_idx \
+     --readFilesIn $FQDIR/${SAMPLE}_R1.fastq.gz $FQDIR/${SAMPLE}_R2.fastq.gz \
+     --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate \
+     --outFileNamePrefix $BAMDIR/${SAMPLE}.
+featureCounts -T 8 -p --countReadPairs \
+     -a /scratch/users/steorra/data/hg19/gencode.v41lift37.annotation.gtf.gz \
+     -o counts.tsv $BAMDIR/*.Aligned.sortedByCoord.out.bam
+Rscript -e '
+library(DESeq2)
+counts &lt;- as.matrix(read.table("counts.tsv", header=TRUE, row.names=1,
+                                check.names=FALSE, skip=1)[,-(1:5)])
+coldata &lt;- data.frame(row.names = colnames(counts),
+                      condition = factor(sub("_rep.*$", "", colnames(counts))))
+dds &lt;- DESeqDataSetFromMatrix(counts, coldata, ~ condition)
+dds &lt;- DESeq(dds)
+res &lt;- results(dds, contrast=c("condition","h_OTX2_KD_day2","h_OTX2_ctrl_day2"))
+write.table(as.data.frame(res), "S6_D2_OTX2_KD_DEG.tsv", sep="\t", quote=FALSE)
+'
+</pre></div>
+</div>
 </div>
 </div>
 </div>
