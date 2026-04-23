@@ -11086,6 +11086,84 @@ macs2 callpeak \
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1ed02ab1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="HOMER-peak-input-(OMIX-peak-BED-%E2%86%92-5-column-HOMER-txt)">HOMER peak input (OMIX peak BED → 5-column HOMER txt)<a class="anchor-link" href="#HOMER-peak-input-(OMIX-peak-BED-%E2%86%92-5-column-HOMER-txt)">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9a8471cd">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# HOMER's findMotifsGenome.pl expects a 5-column tab-separated file:
+#   peak_id  chrom  start  end  strand
+# OMIX006476's 4C OTX2 rep12 peak BED is bit-exact to Supp Table S7,
+# so we rewrite it into HOMER's column order.
+import pandas as pd, pathlib
+OMIX = pathlib.Path('/scratch/users/steorra/data/otx2/OMIX006476')
+OUT  = pathlib.Path('/tmp/otx2_compare/fig3b')
+OUT.mkdir(parents=True, exist_ok=True)
+
+peaks = pd.read_csv(OMIX / 'h_OTX2_day2_CUTRUN_rep12_peaks.bed',
+                    sep='\t', header=None,
+                    names=['chrom','start','end','name','score'])
+peaks.insert(0, 'id', [f'peak_{i}' for i in range(len(peaks))])
+peaks['strand'] = '+'
+peaks[['id','chrom','start','end','strand']].to_csv(
+    OUT/'peaks_4C_OTX2.txt', sep='\t', index=False, header=False)
+print(f'{len(peaks)} peaks -&gt; {OUT/"peaks_4C_OTX2.txt"}')
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ee8ee019">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="HOMER-findMotifsGenome.pl-(produces-homer_out/knownResults.txt-+-PWMs)">HOMER <code>findMotifsGenome.pl</code> (produces <code>homer_out/knownResults.txt</code> + PWMs)<a class="anchor-link" href="#HOMER-findMotifsGenome.pl-(produces-homer_out/knownResults.txt-+-PWMs)">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=cbaa5adb">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
+# Motif enrichment analysis — HOMER's known-motif pipeline (paper's
+# Methods: `-size 200 -len 8,10,12`). ~15 min on 8 cores; writes
+# homer_out/knownResults.txt (parsed by epi.pl.homer_motif_table) and
+# homer_out/knownResults/known{i}.motif (PWMs for each hit).
+cd /tmp/otx2_compare/fig3b
+PATH=/scratch/users/steorra/env/omicdev/bin:/scratch/users/steorra/env/omicdev/share/homer/bin:$PATH \
+findMotifsGenome.pl peaks_4C_OTX2.txt \
+    /scratch/users/steorra/data/hg19/hg19.fa \
+    homer_out \
+    -size 200 -len 8,10,12 -mask -p 8 \
+    -preparsedDir /tmp/otx2_compare/fig3b/preparsed
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a42650a6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
