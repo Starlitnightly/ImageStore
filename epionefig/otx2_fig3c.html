@@ -11008,7 +11008,7 @@ ___________      .__
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3-%C2%B7-Build-TSS-tables-from-GENCODE">3 · Build TSS tables from GENCODE<a class="anchor-link" href="#3-%C2%B7-Build-TSS-tables-from-GENCODE">¶</a></h2><p>Each row is anchored at a single base-pair position (the TSS). <code>compute_matrix_region</code> centres its scan window on the <strong>mid-point</strong> of <code>start</code> and <code>end</code>; setting <code>start = end = TSS</code> makes the midpoint coincide with the TSS rather than with the gene body midpoint (which, on a 10 kb gene, is 5 kb downstream of the TSS and produces an asymmetric, off-centre metaplot).</p>
+<h2 id="3-%C2%B7-Build-gene-subset-tables-from-GENCODE">3 · Build gene-subset tables from GENCODE<a class="anchor-link" href="#3-%C2%B7-Build-gene-subset-tables-from-GENCODE">¶</a></h2><p>Two gene sets → two GTF slices. <code>compute_matrix_region(anchor='5p')</code> does the strand-aware TSS anchoring internally (start on <code>+</code>, end on <code>-</code>). No manual coordinate collapsing needed.</p>
 </div>
 </div>
 </div>
@@ -11020,21 +11020,17 @@ ___________      .__
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Build TSS tables. ``compute_matrix_region(anchor='tss')`` is</span>
-<span class="c1"># strand-aware; we just need chrom/start/end/strand + gene_id so</span>
-<span class="c1"># the helper can pick the correct 5' end per strand.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Filter GENCODE to protein-coding genes (one row per gene), drop</span>
+<span class="c1"># unplaced contigs, and slice to the two gene sets. compute_matrix_region</span>
+<span class="c1"># takes the raw GTF slice — no schema juggling needed (chrom/seqname</span>
+<span class="c1"># are interchangeable, gene_id auto-derived from gene_name).</span>
 <span class="n">gtf</span> <span class="o">=</span> <span class="n">epi</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_gene_annotation</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">GENCODE_GTF</span><span class="p">))</span>  <span class="c1"># protein_coding, no chrM</span>
-<span class="n">gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="p">[</span><span class="o">~</span><span class="n">gtf</span><span class="p">[</span><span class="s1">'chrom'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="p">[</span><span class="o">~</span><span class="n">gtf</span><span class="p">[</span><span class="s1">'chrom'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s1">'gene_name'</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'gene_name'</span><span class="p">:</span><span class="s1">'gene_id'</span><span class="p">})</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_tss_table</span><span class="p">(</span><span class="n">gene_set</span><span class="p">):</span>
-    <span class="n">sub</span> <span class="o">=</span> <span class="n">gtf</span><span class="p">[</span><span class="n">gtf</span><span class="p">[</span><span class="s1">'gene_name'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">gene_set</span><span class="p">)]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s1">'gene_name'</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">sub</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'chrom'</span><span class="p">:</span><span class="s1">'seqname'</span><span class="p">})</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
-        <span class="n">gene_id</span><span class="o">=</span><span class="n">sub</span><span class="p">[</span><span class="s1">'gene_name'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">feature</span><span class="o">=</span><span class="s1">'transcript'</span><span class="p">)[</span>
-        <span class="p">[</span><span class="s1">'seqname'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">,</span><span class="s1">'strand'</span><span class="p">,</span><span class="s1">'gene_name'</span><span class="p">,</span><span class="s1">'gene_id'</span><span class="p">,</span><span class="s1">'feature'</span><span class="p">]]</span>
-
-<span class="n">tgt_df</span> <span class="o">=</span> <span class="n">_tss_table</span><span class="p">(</span><span class="n">activated_4c</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">non_df</span> <span class="o">=</span> <span class="n">_tss_table</span><span class="p">(</span><span class="n">nonmaternal</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'resolved TSSs: targets=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tgt_df</span><span class="p">)</span><span class="si">}</span><span class="s1">  nontargets=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">non_df</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">tgt_gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="p">[</span><span class="n">gtf</span><span class="p">[</span><span class="s1">'gene_id'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">activated_4c</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">non_gtf</span> <span class="o">=</span> <span class="n">gtf</span><span class="p">[</span><span class="n">gtf</span><span class="p">[</span><span class="s1">'gene_id'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">nonmaternal</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'resolved TSSs: targets=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tgt_gtf</span><span class="p">)</span><span class="si">}</span><span class="s1">  nontargets=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">non_gtf</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -11075,8 +11071,8 @@ ___________      .__
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">BW</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">OMIX</span> <span class="o">/</span> <span class="s1">'h_OTX2_day2_CUTRUN_rep12_pmu_100bp_rpkm_bamCoverage.bw'</span><span class="p">)</span>
 <span class="n">bw</span> <span class="o">=</span> <span class="n">epi</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">bigwig</span><span class="p">({</span><span class="s1">'OTX2 4C'</span><span class="p">:</span> <span class="n">BW</span><span class="p">});</span> <span class="n">bw</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-<span class="n">ad_tgt</span> <span class="o">=</span> <span class="n">bw</span><span class="o">.</span><span class="n">compute_matrix_region</span><span class="p">(</span><span class="s1">'OTX2 4C'</span><span class="p">,</span> <span class="n">tgt_df</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">upstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">downstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">'tss'</span><span class="p">)</span>
-<span class="n">ad_non</span> <span class="o">=</span> <span class="n">bw</span><span class="o">.</span><span class="n">compute_matrix_region</span><span class="p">(</span><span class="s1">'OTX2 4C'</span><span class="p">,</span> <span class="n">non_df</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">upstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">downstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">'tss'</span><span class="p">)</span>
+<span class="n">ad_tgt</span> <span class="o">=</span> <span class="n">bw</span><span class="o">.</span><span class="n">compute_matrix_region</span><span class="p">(</span><span class="s1">'OTX2 4C'</span><span class="p">,</span> <span class="n">tgt_gtf</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">upstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">downstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">'5p'</span><span class="p">)</span>
+<span class="n">ad_non</span> <span class="o">=</span> <span class="n">bw</span><span class="o">.</span><span class="n">compute_matrix_region</span><span class="p">(</span><span class="s1">'OTX2 4C'</span><span class="p">,</span> <span class="n">non_gtf</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">upstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">downstream</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">'5p'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">ad_tgt</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ad_non</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -11092,7 +11088,7 @@ ___________      .__
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>└─ Load bigWig files
   └─ Loading OTX2 4C...
-  └─ Computing OTX2 4C matrix
+  └─ Computing OTX2 4C matrix (anchors=['5p'])
 </pre>
 </div>
 </div>
@@ -11105,7 +11101,7 @@ ___________      .__
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes: 100%|█████████████████████████████████████████████████████████████████████████████████| 24/24 [00:00&lt;00:00, 377.98chr/s]</pre>
+<pre>Chromosomes: 100%|█████████████████████████████████████████████████████████████████████████████████| 24/24 [00:00&lt;00:00, 364.19chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -11119,7 +11115,7 @@ ___________      .__
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>  └─ OTX2 4C matrix finished
-  └─ Computing OTX2 4C matrix
+  └─ Computing OTX2 4C matrix (anchors=['5p'])
 </pre>
 </div>
 </div>
@@ -11132,61 +11128,61 @@ ___________      .__
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:   4%|███▍                                                                               | 1/24 [00:00&lt;00:06,  3.52chr/s]</pre>
+<pre>Chromosomes:   4%|███▍                                                                               | 1/24 [00:00&lt;00:06,  3.53chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:   8%|██████▉                                                                            | 2/24 [00:00&lt;00:03,  5.56chr/s]</pre>
+<pre>Chromosomes:   8%|██████▉                                                                            | 2/24 [00:00&lt;00:03,  5.59chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  12%|██████████▍                                                                        | 3/24 [00:00&lt;00:03,  5.51chr/s]</pre>
+<pre>Chromosomes:  12%|██████████▍                                                                        | 3/24 [00:00&lt;00:03,  5.52chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  17%|█████████████▊                                                                     | 4/24 [00:00&lt;00:03,  5.98chr/s]</pre>
+<pre>Chromosomes:  17%|█████████████▊                                                                     | 4/24 [00:00&lt;00:03,  6.00chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  25%|████████████████████▊                                                              | 6/24 [00:00&lt;00:02,  8.75chr/s]</pre>
+<pre>Chromosomes:  25%|████████████████████▊                                                              | 6/24 [00:00&lt;00:02,  8.78chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  33%|███████████████████████████▋                                                       | 8/24 [00:01&lt;00:01,  9.25chr/s]</pre>
+<pre>Chromosomes:  33%|███████████████████████████▋                                                       | 8/24 [00:01&lt;00:01,  9.27chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  38%|███████████████████████████████▏                                                   | 9/24 [00:01&lt;00:01,  8.26chr/s]</pre>
+<pre>Chromosomes:  38%|███████████████████████████████▏                                                   | 9/24 [00:01&lt;00:01,  8.28chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  46%|█████████████████████████████████████▌                                            | 11/24 [00:01&lt;00:01,  8.38chr/s]</pre>
+<pre>Chromosomes:  46%|█████████████████████████████████████▌                                            | 11/24 [00:01&lt;00:01,  8.39chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  50%|█████████████████████████████████████████                                         | 12/24 [00:01&lt;00:01,  7.52chr/s]</pre>
+<pre>Chromosomes:  50%|█████████████████████████████████████████                                         | 12/24 [00:01&lt;00:01,  7.54chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  58%|███████████████████████████████████████████████▊                                  | 14/24 [00:01&lt;00:01,  9.77chr/s]</pre>
+<pre>Chromosomes:  58%|███████████████████████████████████████████████▊                                  | 14/24 [00:01&lt;00:01,  9.78chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -11198,25 +11194,25 @@ ___________      .__
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  75%|█████████████████████████████████████████████████████████████▌                    | 18/24 [00:02&lt;00:00,  9.18chr/s]</pre>
+<pre>Chromosomes:  75%|█████████████████████████████████████████████████████████████▌                    | 18/24 [00:02&lt;00:00,  9.19chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  79%|████████████████████████████████████████████████████████████████▉                 | 19/24 [00:02&lt;00:00,  8.69chr/s]</pre>
+<pre>Chromosomes:  79%|████████████████████████████████████████████████████████████████▉                 | 19/24 [00:02&lt;00:00,  8.70chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  83%|████████████████████████████████████████████████████████████████████▎             | 20/24 [00:02&lt;00:00,  8.44chr/s]</pre>
+<pre>Chromosomes:  83%|████████████████████████████████████████████████████████████████████▎             | 20/24 [00:02&lt;00:00,  8.45chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes:  92%|███████████████████████████████████████████████████████████████████████████▏      | 22/24 [00:02&lt;00:00,  8.86chr/s]</pre>
+<pre>Chromosomes:  92%|███████████████████████████████████████████████████████████████████████████▏      | 22/24 [00:02&lt;00:00,  8.87chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -11228,7 +11224,7 @@ ___________      .__
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Chromosomes: 100%|██████████████████████████████████████████████████████████████████████████████████| 24/24 [00:02&lt;00:00,  8.57chr/s]</pre>
+<pre>Chromosomes: 100%|██████████████████████████████████████████████████████████████████████████████████| 24/24 [00:02&lt;00:00,  8.59chr/s]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
