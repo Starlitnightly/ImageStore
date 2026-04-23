@@ -3,7 +3,34 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>fig3g</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>fig3g</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script><script>
+(function() {
+  function addWidgetsRenderer() {
+    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+    var scriptElement = document.createElement('script');
+    
+    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    
+    var widgetState;
+
+    // Fallback for older version:
+    try {
+      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+        
+        var widgetRendererSrc = 'https://unpkg.com/@jupyter-js-widgets@*/dist/embed.js';
+        
+      }
+    } catch(e) {}
+
+    scriptElement.src = widgetRendererSrc;
+    document.body.appendChild(scriptElement);
+  }
+
+  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+}());
+</script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -10844,7 +10871,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9396089b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=50a44428">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10855,7 +10882,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6abf3307">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5185d42b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10865,12 +10892,12 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5dd0a6e0">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2b9b6c97">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
@@ -10891,7 +10918,7 @@ bowtie2-build --threads 8 hg19.fa bt2_idx/hg19
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=eb961b5d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=61819b6c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10901,12 +10928,12 @@ bowtie2-build --threads 8 hg19.fa bt2_idx/hg19
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=4ca0611f">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=51275450">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
@@ -10924,7 +10951,7 @@ unzip -d /scratch/users/steorra/data/otx2/OMIX006476 \
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c7b2a34b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=07d7be92">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10934,12 +10961,12 @@ unzip -d /scratch/users/steorra/data/otx2/OMIX006476 \
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=18328f0c">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=461ead41">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
@@ -10960,7 +10987,7 @@ echo "See paper Supplementary Information on the Nature article page."
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=652e83b0">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d56e9ea2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10970,12 +10997,12 @@ echo "See paper Supplementary Information on the Nature article page."
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=48824a7c">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=97746730">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
@@ -11029,7 +11056,7 @@ bamCoverage -b $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=13c0216a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=44ff593b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -11039,12 +11066,12 @@ bamCoverage -b $BAMDIR/h_OTX2_day2_CUTRUN_rep12.pmu.bam \
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3ee7217d">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bd4bba8d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
@@ -11069,7 +11096,7 @@ macs2 callpeak \
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ae18baef">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d65c7d85">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -11079,12 +11106,12 @@ macs2 callpeak \
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=eec0e5d3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6b0c5204">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">script</span> false --no-raise-error
@@ -11121,7 +11148,7 @@ done
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">pathlib</span><span class="o">,</span><span class="w"> </span><span class="nn">warnings</span>
@@ -11190,12 +11217,13 @@ ___________      .__
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">s7</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">SUPP_TABLES</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">'Table S7_4C OTX2_CUTRUN_peaks'</span><span class="p">,</span>
-                     <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">'chrom'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">,</span><span class="s1">'name'</span><span class="p">,</span><span class="s1">'score'</span><span class="p">])</span>
-<span class="n">peaks_4C</span> <span class="o">=</span> <span class="n">s7</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'chrom'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">])[[</span><span class="s1">'chrom'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="s1">'start'</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span><span class="s1">'end'</span><span class="p">:</span><span class="nb">int</span><span class="p">})</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">peaks_4C</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">OMIX</span> <span class="o">/</span> <span class="s1">'h_OTX2_day2_CUTRUN_rep12_peaks.bed'</span><span class="p">,</span>
+                       <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">'chrom'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">,</span><span class="s1">'name'</span><span class="p">,</span><span class="s1">'score'</span><span class="p">])</span>
+<span class="n">peaks_4C</span> <span class="o">=</span> <span class="n">peaks_4C</span><span class="p">[[</span><span class="s1">'chrom'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="s1">'start'</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span><span class="s1">'end'</span><span class="p">:</span><span class="nb">int</span><span class="p">})</span>
 <span class="n">peaks_ESC</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">OMIX</span> <span class="o">/</span> <span class="s1">'H9_OTX2_ChIP_21Mcells_peaks.bed'</span><span class="p">,</span>
                           <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">'chrom'</span><span class="p">,</span><span class="s1">'start'</span><span class="p">,</span><span class="s1">'end'</span><span class="p">])</span>
 <span class="n">dec_dfs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -11230,7 +11258,7 @@ ___________      .__
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">gtf</span> <span class="o">=</span> <span class="n">epi</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_gene_annotation</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">GENCODE_GTF</span><span class="p">))</span>
@@ -11293,7 +11321,7 @@ ___________      .__
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_idx</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
@@ -11366,7 +11394,7 @@ Name: count, dtype: int64
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">bw</span> <span class="o">=</span> <span class="n">epi</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">bigwig</span><span class="p">({</span>
@@ -11420,4 +11448,7 @@ Name: count, dtype: int64
 </div>
 </main>
 </body>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {}, "version_major": 2, "version_minor": 0}
+</script>
 </html>
